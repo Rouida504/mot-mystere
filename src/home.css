@@ -1,34 +1,30 @@
-/* Style général de la page d'accueil */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f9;
-}
-
-/* Conteneur principal pour centrer les éléments */
-div {
+/* Conteneur principal de la page d'accueil */
+.home-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
 }
 
 /* Titre principal */
-h1 {
-  color: #2c3e50;
-  margin-bottom: 10px;
+.home-container h1 {
+  color: #4e0330;
+  margin-bottom: 12px;
 }
 
 /* Texte explicatif */
-p {
-  color: #555;
+.home-container p {
+  color: #a06ca5;
   margin-bottom: 20px;
   font-size: 18px;
 }
 
 /* Style du champ de texte pour le pseudo */
-input {
+.home-container input {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -37,12 +33,12 @@ input {
   outline: none;
 }
 
-input:focus {
-  border-color: #3498db;
+.home-container input:focus {
+  border-color: #f5d0ed;
 }
 
 /* Style du bouton "Jouer" */
-button {
+.home-container button {
   padding: 10px 20px;
   font-size: 16px;
   background-color: #3498db;
@@ -52,6 +48,6 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+.home-container button:hover {
   background-color: #2980b9;
 }
