@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
 import { compareWords } from './gameLogic';
+import WORDS from './mots-solutions.json';
 import './Game.css';
+
+// La fonction pour piocher un mot aléatoire utilisera directement cette liste
+const getRandomWord = () => {
+  const randomIndex = Math.floor(Math.random() * WORDS.length);
+  return WORDS[randomIndex].toUpperCase(); 
+};
+
 
 function Game() {
   const [pseudo, setPseudo] = useState('');
@@ -109,9 +117,9 @@ function Game() {
       {gameOver && (
         <div className="game-over-message" style={{ marginTop: '20px', textAlign: 'center' }}>
           {isWin ? (
-            <h3>Bravo ! Vous avez trouvé le mot mystère ! 🎉</h3>
+            <h3>Bravo Vous avez trouvé le mot mystère ! 🎉</h3>
           ) : (
-            <h3>Dommage ! Le mot mystère était : <strong>{targetWord}</strong> 😞</h3>
+            <h3>Dommage Le mot mystère était : <strong>{targetWord}</strong> 😞</h3>
           )}
           <button onClick={resetGame} className="btn-replay" style={{ padding: '10px 20px', cursor: 'pointer', marginTop: '10px' }}>
             Rejouer
