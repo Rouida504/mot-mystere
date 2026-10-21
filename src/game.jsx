@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { compareWords } from './gameLogic';
-import WORDS from './mots_solutions.json';
+import WORDS from "./mots-solutions.json";
 import './Game.css';
 
 // Fonction pour choisir un mot aléatoire dans le fichier JSON
