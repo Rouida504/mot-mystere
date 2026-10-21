@@ -1,788 +1,55 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { compareWords } from './gameLogic'; // Importation de votre fonction de logique
+import { compareWords } from './gameLogic';
 import './Game.css';
 
 function Game() {
   const [pseudo, setPseudo] = useState('');
   const [guesses, setGuesses] = useState([]); // Tableau des mots déjà validés
   const [currentGuess, setCurrentGuess] = useState(''); // Mot en cours de frappe
+  const [gameOver, setGameOver] = useState(false); // État de fin de partie
+  const [isWin, setIsWin] = useState(false); // État de victoire ou défaite
   const targetWord = "ROUGE"; // Le mot mystère
-  const [gameOver, setGameOver] = useState(false);
-  const [isWin, setIsWin] = useState(false);
 
   // Récupération du pseudo dans le localStorage au chargement
   useEffect(() => {
     const savedPseudo = localStorage.getItem('pseudo');
     if (savedPseudo) {
       setPseudo(savedPseudo);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
     }
   }, []);
+
+  // Fonction pour réinitialiser le jeu
+  const resetGame = () => {
+    setGuesses([]);
+    setCurrentGuess('');
+    setGameOver(false);
+    setIsWin(false);
+  };
 
   // Gestion de la saisie au clavier
   useEffect(() => {
     function handleKeyDown(e) {
+      if (gameOver) return; // Bloque le clavier si la partie est finie
+
       const key = e.key.toUpperCase();
 
       if (key === 'ENTER') {
         // Valider le mot si 5 lettres et qu'il reste des essais
         if (currentGuess.length === 5 && guesses.length < 6) {
-          setGuesses([...guesses, currentGuess]);
+          const newGuesses = [...guesses, currentGuess];
+          setGuesses(newGuesses);
           setCurrentGuess('');
+
+          // Victoire : le mot proposé est égal au mot mystère
+          if (currentGuess === targetWord) {
+            setGameOver(true);
+            setIsWin(true);
+          } 
+          // Défaite : 6 essais atteints sans trouver le mot
+          else if (newGuesses.length === 6) {
+            setGameOver(true);
+            setIsWin(false);
+          }
         }
       } else if (key === 'BACKSPACE') {
         // Effacer la dernière lettre
@@ -797,7 +64,7 @@ function Game() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentGuess, guesses]);
+  }, [currentGuess, guesses, gameOver]);
 
   return (
     <div className="game-container">
@@ -821,8 +88,8 @@ function Game() {
                 if (guess) {
                   // Ligne déjà validée : on affiche la lettre et sa couleur (vert, jaune, gris)
                   letter = guess[colIndex];
-                  colorClass = colors[colIndex]; // 'green', 'yellow' ou 'gray'
-                } else if (isCurrentRow) {
+                  colorClass = colors[colIndex];
+                } else if (isCurrentRow && !gameOver) {
                   // Ligne en cours de frappe : on affiche la lettre tapée
                   letter = currentGuess[colIndex] || '';
                 }
@@ -837,6 +104,20 @@ function Game() {
           );
         })}
       </div>
+
+      {/* Message de fin de partie et bouton Rejouer */}
+      {gameOver && (
+        <div className="game-over-message" style={{ marginTop: '20px', textAlign: 'center' }}>
+          {isWin ? (
+            <h3>Bravo ! Vous avez trouvé le mot mystère ! 🎉</h3>
+          ) : (
+            <h3>Dommage ! Le mot mystère était : <strong>{targetWord}</strong> 😞</h3>
+          )}
+          <button onClick={resetGame} className="btn-replay" style={{ padding: '10px 20px', cursor: 'pointer', marginTop: '10px' }}>
+            Rejouer
+          </button>
+        </div>
+      )}
     </div>
   );
 }
