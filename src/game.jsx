@@ -2,41 +2,40 @@ import { useState, useEffect } from 'react';
 import './Game.css';
 
 function Game() {
-  const [pseudo, setPseudo] = useState('');
+  const [pseudo] = useState(() => localStorage.getItem('pseudo') ?? '');
+  const [currentGuess, setCurrentGuess] = useState('');
 
-  // On récupère le pseudo dans le localStorage au chargement du composant
   useEffect(() => {
-    const savedPseudo = localStorage.getItem('pseudo');
-    if (savedPseudo) {
-      setPseudo(savedPseudo);
-    }
-  }, []);
+    const handleKeyDown = (e) => {
+      const key = e.key.toUpperCase();
 
-  // Grille de 6 lignes et 5 colonnes (vide pour l'instant)
-  const rows = Array(6).fill('');
-  const cols = Array(5).fill('');
+      if (key === 'BACKSPACE') {
+        setCurrentGuess((prev) => prev.slice(0, -1));
+      } else if (key.length === 1 && key >= 'A' && key <= 'Z') {
+        setCurrentGuess((prev) => (prev.length < 5 ? prev + key : prev));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <div className="game-container">
-      <h2>Partie de {pseudo || 'Joueur'}</h2>
-      <p>Devinez le mot secret !</p>
+      <h2>Partie de {pseudo ? pseudo : 'Joueur'}</h2>
+      <p>Tape un mot de 5 lettres au clavier !</p>
 
-      {/* Grille de jeu */}
       <div className="grid">
-        {rows.map((_, rowIndex) => (
-          <div key={rowIndex} className="row">
-            {cols.map((_, colIndex) => (
-              <div key={colIndex} className="cell">
-                {/* La lettre s'affichera ici plus tard */}
-              </div>
-            ))}
-          </div>
-        ))}
+        <div className="row">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <div key={i} className="cell">
+              {currentGuess[i]}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
 export default Game;
-export default Game;
- 
