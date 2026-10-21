@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Home.css';
 
 function Home() {
   // Variable d'état pour stocker le pseudo tapé par l'utilisateur
@@ -43,19 +42,3 @@ function Home() {
 }
 
 export default Home;
-return (
-  <div className="home-container">
-    <h1>Le Mot Mystère</h1>
-    <p>Devinez le mot secret en 6 essais !</p>
-
-    <form onSubmit={handleSubmit}>
-      <input 
-        type="text" 
-        placeholder="Entrez votre pseudo" 
-        value={pseudo} 
-        onChange={(e) => setPseudo(e.target.value)} 
-      />
-      <button type="submit">Jouer</button>
-    </form>
-  </div>
-);
