@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { compareWords } from './gameLogic';
-import WORDS from './mots_solutions.json';[cite: 2]
+import WORDS from './mots_solutions.json';
 import './Game.css';
 
 // Fonction pour choisir un mot aléatoire dans le fichier JSON
 const getRandomWord = () => {
   const randomIndex = Math.floor(Math.random() * WORDS.length);
-  return WORDS[randomIndex].toUpperCase(); // On met en majuscules pour correspondre au jeu
+  return WORDS[randomIndex].toUpperCase(); // On met en majuscules pour le jeu
 };
 
 function Game() {
@@ -16,7 +16,7 @@ function Game() {
   const [gameOver, setGameOver] = useState(false); // État de fin de partie
   const [isWin, setIsWin] = useState(false); // État de victoire ou défaite
   
-  // Utilisation d'un state pour le mot mystère pioché aléatoirement
+  // State pour le mot mystère pioché aléatoirement
   const [targetWord, setTargetWord] = useState(getRandomWord);
 
   // Récupération du pseudo dans le localStorage au chargement
@@ -86,7 +86,7 @@ function Game() {
           const isCurrentRow = rowIndex === guesses.length;
           const guess = guesses[rowIndex];
 
-          // Si la ligne a déjà été jouée, on calcule les couleurs des lettres
+          // Si la ligne a été jouée, on calcule les couleurs
           const colors = guess ? compareWords(guess, targetWord) : [];
 
           return (
@@ -96,11 +96,9 @@ function Game() {
                 let colorClass = '';
 
                 if (guess) {
-                  // Ligne déjà validée : on affiche la lettre et sa couleur (vert, jaune, gris)
                   letter = guess[colIndex];
                   colorClass = colors[colIndex];
                 } else if (isCurrentRow && !gameOver) {
-                  // Ligne en cours de frappe : on affiche la lettre tapée
                   letter = currentGuess[colIndex] || '';
                 }
 
