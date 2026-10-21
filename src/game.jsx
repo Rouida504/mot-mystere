@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import { compareWords } from './gameLogic';
-import WORDS from './mots-solutions.json';
+import WORDS from './mots_solutions.json';[cite: 2]
 import './Game.css';
 
-// La fonction pour piocher un mot aléatoire utilisera directement cette liste
+// Fonction pour choisir un mot aléatoire dans le fichier JSON
 const getRandomWord = () => {
   const randomIndex = Math.floor(Math.random() * WORDS.length);
-  return WORDS[randomIndex].toUpperCase(); 
+  return WORDS[randomIndex].toUpperCase(); // On met en majuscules pour correspondre au jeu
 };
-
 
 function Game() {
   const [pseudo, setPseudo] = useState('');
@@ -16,7 +15,9 @@ function Game() {
   const [currentGuess, setCurrentGuess] = useState(''); // Mot en cours de frappe
   const [gameOver, setGameOver] = useState(false); // État de fin de partie
   const [isWin, setIsWin] = useState(false); // État de victoire ou défaite
-  const targetWord = "ROUGE"; // Le mot mystère
+  
+  // Utilisation d'un state pour le mot mystère pioché aléatoirement
+  const [targetWord, setTargetWord] = useState(getRandomWord);
 
   // Récupération du pseudo dans le localStorage au chargement
   useEffect(() => {
@@ -26,12 +27,13 @@ function Game() {
     }
   }, []);
 
-  // Fonction pour réinitialiser le jeu
+  // Fonction pour réinitialiser le jeu et changer de mot mystère
   const resetGame = () => {
     setGuesses([]);
     setCurrentGuess('');
     setGameOver(false);
     setIsWin(false);
+    setTargetWord(getRandomWord()); // Change de mot mystère à chaque nouvelle partie !
   };
 
   // Gestion de la saisie au clavier
@@ -72,7 +74,7 @@ function Game() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentGuess, guesses, gameOver]);
+  }, [currentGuess, guesses, gameOver, targetWord]);
 
   return (
     <div className="game-container">
@@ -117,9 +119,9 @@ function Game() {
       {gameOver && (
         <div className="game-over-message" style={{ marginTop: '20px', textAlign: 'center' }}>
           {isWin ? (
-            <h3>Bravo Vous avez trouvé le mot mystère ! 🎉</h3>
+            <h3>Bravo ! Vous avez trouvé le mot mystère ! 🎉</h3>
           ) : (
-            <h3>Dommage Le mot mystère était : <strong>{targetWord}</strong> 😞</h3>
+            <h3>Dommage ! Le mot mystère était : <strong>{targetWord}</strong> 😞</h3>
           )}
           <button onClick={resetGame} className="btn-replay" style={{ padding: '10px 20px', cursor: 'pointer', marginTop: '10px' }}>
             Rejouer
