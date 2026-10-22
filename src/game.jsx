@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { compareWords } from './gameLogic';
-import mots from './mots_solutions.json';
+import mots from './mots-solutions.json';
 import './Game.css';
 
 function Game() {
