@@ -45,7 +45,7 @@ function Stats() {
 
   return (
     <div style={{ maxWidth: '500px', margin: '30px auto', textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
-      <h2>📊 Statistiques du joueur</h2>
+      <h2>Statistiques du joueur</h2>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px', margin: '30px 0' }}>
         <div style={{ background: '#f5f5f5', padding: '15px', borderRadius: '8px' }}>

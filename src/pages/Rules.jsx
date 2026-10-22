@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 function Rules() {
   return (
     <div style={{ maxWidth: '500px', margin: '20px auto', padding: '20px' }}>
-      <h2>📖 Règles du jeu</h2>
+      <h2>Règles du jeu</h2>
       <p>Devine le mot mystère en 6 essais maximum.</p>
 
       <h3>Signification des couleurs :</h3>
