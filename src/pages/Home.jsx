@@ -9,19 +9,11 @@ function Home() {
   useEffect(() => {
     const savedPseudo = localStorage.getItem('pseudo') || '';
     setPseudoInput(savedPseudo);
-
-    // Écouter la touche Entrée pour lancer directement le jeu
-    const handleKeyDown = (e) => {
-      if (e.key === 'Enter') {
-        sauvegarderEtJouer();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [pseudoInput]);
+  }, []);
 
   // Enregistrer le pseudo et lancer la partie
-  const sauvegarderEtJouer = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     const pseudoFinal = pseudoInput.trim() || 'Joueur';
     localStorage.setItem('pseudo', pseudoFinal);
     navigate('/game');
@@ -29,11 +21,11 @@ function Home() {
 
   return (
     <div style={{ textAlign: 'center', padding: '40px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>Le Mot Mystère</h1>
+      <h1>🎮 Le Mot Mystère</h1>
       <p>Bienvenue sur le jeu Wordle !</p>
 
-      {/* Champ pour entrer le pseudo */}
-      <div style={{ margin: '20px 0' }}>
+      {/* Formulaire pour gérer proprement la touche Entrée et le clic */}
+      <form onSubmit={handleSubmit} style={{ margin: '20px 0' }}>
         <label htmlFor="pseudo" style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
           Entre ton pseudo :
         </label>
@@ -52,16 +44,20 @@ function Home() {
             width: '200px'
           }}
         />
-      </div>
+        
+        {/* Bouton de validation / lancement */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '200px', margin: '20px auto 0 auto' }}>
+          <button 
+            type="submit"
+            style={{ padding: '12px', cursor: 'pointer', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#556B2F', color: 'white', border: 'none', borderRadius: '4px' }}
+          >
+            Jouer (Entrée ↵)
+          </button>
+        </div>
+      </form>
 
-      {/* Boutons de navigation */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '200px', margin: '20px auto' }}>
-        <button 
-          onClick={sauvegarderEtJouer}
-          style={{ padding: '12px', cursor: 'pointer', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#556B2F', color: 'white', border: 'none', borderRadius: '4px' }}
-        >
-          Jouer (Entrée)
-        </button>
+      {/* Autres liens de navigation */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '200px', margin: '0 auto' }}>
         <Link to="/rules"><button style={{ width: '100%', padding: '10px', cursor: 'pointer', borderRadius: '4px' }}>Règles du jeu</button></Link>
         <Link to="/scores"><button style={{ width: '100%', padding: '10px', cursor: 'pointer', borderRadius: '4px' }}>Scores</button></Link>
         <Link to="/stats"><button style={{ width: '100%', padding: '10px', cursor: 'pointer', borderRadius: '4px' }}>Statistiques</button></Link>
