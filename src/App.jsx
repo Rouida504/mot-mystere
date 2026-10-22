@@ -20,7 +20,7 @@ function App() {
 
         {/* Définition des adresses */}
         <Routes>
-          <Route path="/" element={<home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/game" element={<Game />} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/scores" element={<Scores />} />
