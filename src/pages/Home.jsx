@@ -1,43 +1,40 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Home() {
-  // Variable d'état pour stocker et mettre à jour le pseudo tapé par l'utilisateur
-  const [pseudo, setPseudo] = useState('');
-  
-  // Hook de React Router pour gérer la redirection vers la page du jeu
   const navigate = useNavigate();
 
-  // Fonction appelée lors de la validation du formulaire (clic sur "Jouer" ou touche Entrée)
-  function handleSubmit(e) {
-    e.preventDefault(); // Empêche le rechargement automatique de la page par le navigateur
-    
-    // On vérifie que le champ du pseudo n'est pas vide
-    if (pseudo !== '') {
-      // Sauvegarde du pseudo dans le localStorage pour les visites suivantes[cite: 2, 4]
-      localStorage.setItem('pseudo', pseudo);
-      
-      // Redirection programmée vers la page de jeu (/jeu)
-      navigate('/jeu');
-    }
-  }
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter') {
+        navigate('/game');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate]);
 
   return (
-    // Utilisation de la classe CSS spécifique pour la page d'accueil
-    <div className="home-container">
-      <h1>Le Mot Mystère</h1>
-      <p>Devinez le mot secret en 6 essais !</p>
+    <div style={{ textAlign: 'center', padding: '40px' }}>
+      <h1>🎮 Le Mot Mystère</h1>
+      <p>Appuie sur <strong>Entrée</strong> ou clique ci-dessous pour jouer</p>
 
-      {/* Formulaire de saisie du pseudo du joueur */}
-      <form onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          placeholder="Entrez votre pseudo" 
-          value={pseudo} 
-          onChange={(e) => setPseudo(e.target.value)} 
-        />
-        <button type="submit">Jouer</button>
-      </form>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '220px', margin: '30px auto' }}>
+        <Link to="/game">
+          <button style={{ width: '100%', padding: '12px', cursor: 'pointer', fontSize: '16px' }}>
+            Jouer (Entrée ↵)
+          </button>
+        </Link>
+        <Link to="/rules">
+          <button style={{ width: '100%', padding: '10px', cursor: 'pointer' }}>Règles du jeu</button>
+        </Link>
+        <Link to="/scores">
+          <button style={{ width: '100%', padding: '10px', cursor: 'pointer' }}>Scores</button>
+        </Link>
+        <Link to="/stats">
+          <button style={{ width: '100%', padding: '10px', cursor: 'pointer' }}>Statistiques</button>
+        </Link>
+      </div>
     </div>
   );
 }
