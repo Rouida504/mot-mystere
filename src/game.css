@@ -1,4 +1,7 @@
-/*  STRUCTURE DE LA GRILLE DE JEU*/
+
+/* ==========================================
+   1. STRUCTURE DE LA GRILLE DE JEU
+   ========================================== */
 .game-container {
   display: flex;
   flex-direction: column;
@@ -35,7 +38,9 @@
 }
 
 
-/* ANIMATION DE TREMBLEMENT (SHAKE) */
+/* ==========================================
+   2. ANIMATION DE TREMBLEMENT (SHAKE)
+   ========================================== */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-6px); }
@@ -47,30 +52,34 @@
 }
 
 
-/* COULEURS DES LETTRES (GRILLE & CLAVIER) */
-/* Vert olive : Bonne lettre au bon endroit */
+/* ==========================================
+   3. COULEURS DES LETTRES (GRILLE & CLAVIER)
+   ========================================== */
+/* Vert : Bonne lettre au bon endroit */
 .correct, .cell.green {
-  background-color: #556B2F !important;
+  background-color: #6aaa64 !important;
   color: white !important;
-  border-color: #556B2F !important;
+  border-color: #6aaa64 !important;
 }
 
-/* Beige crème : Bonne lettre au mauvais endroit */
+/* Jaune : Bonne lettre au mauvais endroit */
 .present, .cell.yellow {
-  background-color: #F5F0EB !important;
-  color: #333333 !important;
-  border-color: #D3C5B4 !important;
-}
-
-/* Rose clair : Lettre absente du mot */
-.absent, .cell.gray {
-  background-color: #FFB6C1 !important;
+  background-color: #c9b458 !important;
   color: white !important;
-  border-color: #FFB6C1 !important;
+  border-color: #c9b458 !important;
+}
+
+/* Gris : Lettre absente du mot */
+.absent, .cell.gray {
+  background-color: #787c7e !important;
+  color: white !important;
+  border-color: #787c7e !important;
 }
 
 
-/* CLAVIER VIRTUEL INTERACTIF*/
+/* ==========================================
+   4. CLAVIER VIRTUEL INTERACTIF
+   ========================================== */
 .keyboard {
   display: flex;
   flex-direction: column;
@@ -98,16 +107,16 @@
 
 /* Application des couleurs sur les touches du clavier */
 .keyboard .key.correct {
-  background-color: #556B2F !important;
+  background-color: #6aaa64 !important;
   color: white !important;
 }
 
 .keyboard .key.present {
-  background-color: #F5F0EB !important;
-  color: #333333 !important;
+  background-color: #c9b458 !important;
+  color: white !important;
 }
 
 .keyboard .key.absent {
-  background-color: #FFB6C1 !important;
+  background-color: #787c7e !important;
   color: white !important;
 }
