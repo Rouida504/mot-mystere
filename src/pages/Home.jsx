@@ -21,7 +21,7 @@ function Home() {
 
   return (
     <div style={{ textAlign: 'center', padding: '40px', fontFamily: 'Arial, sans-serif' }}>
-      <h1>🎮 Le Mot Mystère</h1>
+      <h1>Le Mot Mystère</h1>
       <p>Bienvenue sur le jeu Wordle !</p>
 
       {/* Formulaire pour gérer proprement la touche Entrée et le clic */}
@@ -51,7 +51,7 @@ function Home() {
             type="submit"
             style={{ padding: '12px', cursor: 'pointer', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#556B2F', color: 'white', border: 'none', borderRadius: '4px' }}
           >
-            Jouer (Entrée ↵)
+            Jouer 
           </button>
         </div>
       </form>
