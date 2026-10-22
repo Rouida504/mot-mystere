@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Home from './pages/Home';
+import home from './pages/home';
 import Game from './Game';
 import Rules from './pages/Rules';
 import Scores from './pages/Scores';
@@ -20,7 +20,7 @@ function App() {
 
         {/* Définition des adresses */}
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<home />} />
           <Route path="/game" element={<Game />} />
           <Route path="/rules" element={<Rules />} />
           <Route path="/scores" element={<Scores />} />
