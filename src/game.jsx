@@ -1,110 +1,98 @@
 import { useState, useEffect } from 'react';
 import { compareWords } from './gameLogic';
-import WORDS from './mots_solutions.json';
+import mots from './mots_solutions.json';
 import './Game.css';
 
-// Fonction pour choisir un mot aléatoire dans le fichier JSON
-const getRandomWord = () => {
-  const randomIndex = Math.floor(Math.random() * WORDS.length);
-  return WORDS[randomIndex].toUpperCase(); // On met en majuscules pour le jeu
-};
-
 function Game() {
-  const [pseudo, setPseudo] = useState('');
-  const [guesses, setGuesses] = useState([]); // Tableau des mots déjà validés
-  const [currentGuess, setCurrentGuess] = useState(''); // Mot en cours de frappe
-  const [gameOver, setGameOver] = useState(false); // État de fin de partie
-  const [isWin, setIsWin] = useState(false); // État de victoire ou défaite
-  
-  // State pour le mot mystère pioché aléatoirement
-  const [targetWord, setTargetWord] = useState(getRandomWord);
+  // Choisir un mot au hasard dans le fichier au démarrage
+  const [motMystere, setMotMystere] = useState(() => {
+    const index = Math.floor(Math.random() * mots.length);
+    return mots[index].toUpperCase();
+  });
 
-  // Récupération du pseudo dans le localStorage au chargement
+  const [pseudo, setPseudo] = useState('');
+  const [guesses, setGuesses] = useState([]);
+  const [currentGuess, setCurrentGuess] = useState('');
+  const [gameOver, setGameOver] = useState(false);
+  const [isWin, setIsWin] = useState(false);
+
+  // Charger le pseudo stocké
   useEffect(() => {
-    const savedPseudo = localStorage.getItem('pseudo');
-    if (savedPseudo) {
-      setPseudo(savedPseudo);
-    }
+    const saved = localStorage.getItem('pseudo');
+    if (saved) setPseudo(saved);
   }, []);
 
-  // Fonction pour réinitialiser le jeu et changer de mot mystère
-  const resetGame = () => {
+  // Fonction pour recommencer une partie avec un nouveau mot
+  const relancerPartie = () => {
+    const index = Math.floor(Math.random() * mots.length);
+    setMotMystere(mots[index].toUpperCase());
     setGuesses([]);
     setCurrentGuess('');
     setGameOver(false);
     setIsWin(false);
-    setTargetWord(getRandomWord()); // Change de mot mystère à chaque nouvelle partie !
   };
 
-  // Gestion de la saisie au clavier
+  // Gestion des touches du clavier
   useEffect(() => {
     function handleKeyDown(e) {
-      if (gameOver) return; // Bloque le clavier si la partie est finie
+      if (gameOver) return;
 
-      const key = e.key.toUpperCase();
+      const touche = e.key.toUpperCase();
 
-      if (key === 'ENTER') {
-        // Valider le mot si 5 lettres et qu'il reste des essais
+      if (touche === 'ENTER') {
         if (currentGuess.length === 5 && guesses.length < 6) {
-          const newGuesses = [...guesses, currentGuess];
-          setGuesses(newGuesses);
+          const nouvellesPropositions = [...guesses, currentGuess];
+          setGuesses(nouvellesPropositions);
           setCurrentGuess('');
 
-          // Victoire : le mot proposé est égal au mot mystère
-          if (currentGuess === targetWord) {
+          if (currentGuess === motMystere) {
             setGameOver(true);
             setIsWin(true);
-          } 
-          // Défaite : 6 essais atteints sans trouver le mot
-          else if (newGuesses.length === 6) {
+          } else if (nouvellesPropositions.length === 6) {
             setGameOver(true);
             setIsWin(false);
           }
         }
-      } else if (key === 'BACKSPACE') {
-        // Effacer la dernière lettre
+      } else if (touche === 'BACKSPACE') {
         setCurrentGuess(currentGuess.slice(0, -1));
-      } else if (/^[A-Z]$/.test(key)) {
-        // Ajouter la lettre si on n'a pas dépassé 5 lettres
+      } else if (touche.length === 1 && touche >= 'A' && touche <= 'Z') {
         if (currentGuess.length < 5) {
-          setCurrentGuess(currentGuess + key);
+          setCurrentGuess(currentGuess + touche);
         }
       }
     }
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentGuess, guesses, gameOver, targetWord]);
+  }, [currentGuess, guesses, gameOver, motMystere]);
 
   return (
     <div className="game-container">
       <h2>Partie de {pseudo || 'Joueur'}</h2>
 
-      {/* Grille de 6 lignes */}
+      {/* Affichage de la grille de jeu */}
       <div className="grid">
         {Array.from({ length: 6 }).map((_, rowIndex) => {
-          const isCurrentRow = rowIndex === guesses.length;
-          const guess = guesses[rowIndex];
-
-          // Si la ligne a été jouée, on calcule les couleurs
-          const colors = guess ? compareWords(guess, targetWord) : [];
+          const ligneActuelle = rowIndex === guesses.length;
+          const motSaisi = guesses[rowIndex];
+          const couleurs = motSaisi ? compareWords(motSaisi, motMystere) : [];
 
           return (
             <div key={rowIndex} className="row">
               {Array.from({ length: 5 }).map((_, colIndex) => {
-                let letter = '';
-                let colorClass = '';
+                let lettre = '';
+                let classeCouleur = '';
 
-                if (guess) {
-                  letter = guess[colIndex];
-                  colorClass = colors[colIndex];
-                } else if (isCurrentRow && !gameOver) {
-                  letter = currentGuess[colIndex] || '';
+                if (motSaisi) {
+                  lettre = motSaisi[colIndex];
+                  classeCouleur = couleurs[colIndex];
+                } else if (ligneActuelle && !gameOver) {
+                  lettre = currentGuess[colIndex] || '';
                 }
 
                 return (
-                  <div key={colIndex} className={`cell ${colorClass}`}>
-                    {letter}
+                  <div key={colIndex} className={`cell ${classeCouleur}`}>
+                    {lettre}
                   </div>
                 );
               })}
@@ -113,15 +101,15 @@ function Game() {
         })}
       </div>
 
-      {/* Message de fin de partie et bouton Rejouer */}
+      {/* Message de fin */}
       {gameOver && (
         <div className="game-over-message" style={{ marginTop: '20px', textAlign: 'center' }}>
           {isWin ? (
-            <h3>Bravo ! Vous avez trouvé le mot mystère ! 🎉</h3>
+            <h3>Bravo, tu as gagné ! 🎉</h3>
           ) : (
-            <h3>Dommage ! Le mot mystère était : <strong>{targetWord}</strong> 😞</h3>
+            <h3>Perdu ! Le mot était : <strong>{motMystere}</strong> 😢</h3>
           )}
-          <button onClick={resetGame} className="btn-replay" style={{ padding: '10px 20px', cursor: 'pointer', marginTop: '10px' }}>
+          <button onClick={relancerPartie} style={{ padding: '10px 20px', marginTop: '10px', cursor: 'pointer' }}>
             Rejouer
           </button>
         </div>
