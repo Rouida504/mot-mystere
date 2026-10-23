@@ -18,6 +18,9 @@ function Quatrdle() {
     setTargetWords(Array.from(words));
   }, []);
 
+  // Vérifier si tous les mots ont été trouvés
+  const allWon = targetWords.length > 0 && targetWords.every(target => guesses.includes(target));
+
   // 2. Gestion de la saisie au clavier physique
   useEffect(() => {
     if (gameOver || targetWords.length === 0) return;
@@ -33,8 +36,9 @@ function Quatrdle() {
         setGuesses(newGuesses);
         setCurrentGuess('');
 
-        // Vérification de fin de partie (9 essais ou 4 résolus)
-        if (newGuesses.length >= maxAttempts) {
+        // Vérification de fin de partie (9 essais ou 4 mots résolus)
+        const isAllFound = targetWords.every(target => newGuesses.includes(target));
+        if (newGuesses.length >= maxAttempts || isAllFound) {
           setGameOver(true);
         }
       } else if (e.key === 'Backspace') {
@@ -59,32 +63,40 @@ function Quatrdle() {
   return (
     <div style={{ padding: '20px', textAlign: 'center', fontFamily: 'Arial' }}>
       <h2>Mode Quatrdle (4 Grilles)</h2>
-      <p>Essai : {guesses.length} / {maxAttempts}</p>
+      <p>Essai global : {guesses.length} / {maxAttempts}</p>
 
       {/* Affichage des 4 grilles en 2x2 */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', maxWidth: '600px', margin: '20px auto' }}>
         {targetWords.map((target, gridIndex) => {
-          // Vérifie si cette grille est résolue
-          const isGridWon = guesses.some(g => g === target);
+          // Vérifie si cette grille est résolue et à quel essai elle l'a été
+          const isGridWon = guesses.includes(target);
+          const solvedIndex = guesses.findIndex(g => g === target);
 
           return (
-            <div key={gridIndex} style={{ border: '2px solid #ccc', padding: '10px', borderRadius: '8px', background: isGridWon ? '#e6f4ea' : '#fff' }}>
-              <h4>Grille {gridIndex + 1} {isGridWon ? '🎉' : ''}</h4>
+            <div key={gridIndex} style={{ 
+              border: `2px solid ${isGridWon ? '#6aaa64' : '#ccc'}`, 
+              padding: '10px', 
+              borderRadius: '8px', 
+              background: isGridWon ? '#e6f4ea' : '#fff' 
+            }}>
+              <h4>Grille {gridIndex + 1} {isGridWon ? '🎉 Trouvé !' : ''}</h4>
               
               {/* Génération des lignes de la grille (9 essais max) */}
               {Array.from({ length: maxAttempts }).map((_, rowIndex) => {
-                const guess = guesses[rowIndex] || (rowIndex === guesses.length ? currentGuess : '');
-                const isSubmitted = rowIndex < guesses.length;
+                // Si la grille est gagnée, on fige les lignes après la trouvaille
+                const isFrozenAfterWin = isGridWon && solvedIndex !== -1 && rowIndex > solvedIndex;
+                const guess = isFrozenAfterWin ? '' : (guesses[rowIndex] || (rowIndex === guesses.length ? currentGuess : ''));
+                const isSubmitted = rowIndex < guesses.length && (!isGridWon || rowIndex <= solvedIndex);
 
                 return (
-                  <div key={rowIndex} style={{ display: 'flex', justifyContent: 'center', gap: '4px', marginBottom: '4px' }}>
+                  <div key={rowIndex} style={{ display: 'flex', justifyContent: 'center', gap: '4px', marginBottom: '4px', opacity: isFrozenAfterWin ? 0.3 : 1 }}>
                     {Array.from({ length: 5 }).map((_, colIndex) => {
                       const letter = guess[colIndex] || '';
                       let bgColor = '#fff';
                       let textColor = '#000';
 
-                      if (isSubmitted) {
-                        bgColor = getLetterStatus(letter, colIndex, target);
+                      if (isSubmitted && guesses[rowIndex]) {
+                        bgColor = getLetterStatus(guesses[rowIndex][colIndex], colIndex, target);
                         textColor = '#fff';
                       }
 
@@ -115,8 +127,8 @@ function Quatrdle() {
       </div>
 
       {gameOver && (
-        <div style={{ margin: '20px 0', padding: '15px', background: '#ffebee', borderRadius: '5px' }}>
-          <h3>Fin de partie !</h3>
+        <div style={{ margin: '20px 0', padding: '15px', background: allWon ? '#d4edda' : '#ffebee', borderRadius: '5px' }}>
+          <h3>{allWon ? '🏆 Victoire éclatante ! Les 4 grilles sont résolues !' : 'Fin de partie !'}</h3>
           <p>Les mots mystères étaient : <strong>{targetWords.join(', ')}</strong></p>
         </div>
       )}
