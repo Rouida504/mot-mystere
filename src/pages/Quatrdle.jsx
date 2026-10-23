@@ -133,6 +133,57 @@ function Quatrdle() {
         </div>
       )}
 
+      {/* Clavier virtuel interactif */}
+      <div style={{ maxWidth: '500px', margin: '20px auto' }}>
+        {['AZERTYUIOP', 'QSDFGHJKLM', 'WXCVBN'].map((row, rowIndex) => (
+          <div key={rowIndex} style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginBottom: '6px' }}>
+            {row.split('').map((letter) => (
+              <button
+                key={letter}
+                onClick={() => {
+                  if (gameOver) return;
+                  if (currentGuess.length < 5) {
+                    setCurrentGuess(prev => prev + letter);
+                  }
+                }}
+                style={{
+                  padding: '12px 14px',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  borderRadius: '4px',
+                  border: 'none',
+                  backgroundColor: '#d3d6da',
+                  cursor: 'pointer',
+                  color: '#000'
+                }}
+              >
+                {letter}
+              </button>
+            ))}
+            {rowIndex === 2 && (
+              <button
+                onClick={() => {
+                  if (gameOver) return;
+                  setCurrentGuess(prev => prev.slice(0, -1));
+                }}
+                style={{
+                  padding: '12px 14px',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  borderRadius: '4px',
+                  border: 'none',
+                  backgroundColor: '#d3d6da',
+                  cursor: 'pointer',
+                  color: '#000'
+                }}
+              >
+                ⌫
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+
       <div style={{ marginTop: '20px' }}>
         <Link to="/"><button style={{ padding: '8px 16px', cursor: 'pointer' }}>Retour à l'accueil</button></Link>
       </div>
