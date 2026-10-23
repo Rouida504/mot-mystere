@@ -46,19 +46,24 @@ function Home() {
           }}
         />
         
-        {/* Bouton de validation / lancement */}
+        {/* Bouton Jouer classique */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '200px', margin: '20px auto 0 auto' }}>
           <button 
             type="submit"
             style={{ padding: '12px', cursor: 'pointer', fontSize: '16px', fontWeight: 'bold', backgroundColor: '#556B2F', color: 'white', border: 'none', borderRadius: '4px' }}
           >
-            Jouer 
+            Jouer
           </button>
         </div>
       </form>
 
       {/* Autres liens de navigation */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '200px', margin: '0 auto' }}>
+        <Link to="/quatrdle">
+          <button style={{ width: '100%', padding: '10px', cursor: 'pointer', borderRadius: '4px', backgroundColor: '#4a5568', color: 'white', fontWeight: 'bold', border: 'none' }}>
+            🎮 Mode Quatrdle (4 Grilles)
+          </button>
+        </Link>
         <Link to="/rules"><button style={{ width: '100%', padding: '10px', cursor: 'pointer', borderRadius: '4px' }}>Règles du jeu</button></Link>
         <Link to="/scores"><button style={{ width: '100%', padding: '10px', cursor: 'pointer', borderRadius: '4px' }}>Scores</button></Link>
         <Link to="/stats"><button style={{ width: '100%', padding: '10px', cursor: 'pointer', borderRadius: '4px' }}>Statistiques</button></Link>
@@ -66,12 +71,5 @@ function Home() {
     </div>
   );
 }
-
-<Link to="/quatrdle">
-  <button style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}>
-    🎮 Mode Quatrdle (4 Grilles)
-  </button>
-</Link>
-
 
 export default Home;
