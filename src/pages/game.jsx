@@ -225,26 +225,32 @@ function Game() {
       setIsLoading(true);
       setMessageErreur('');
 
-      // Validation Wiktionnaire + Plan B local
-      fetch(`https://fr.wiktionary.org/api/rest_v1/page/definition/${currentGuess.toLowerCase()}`)
-        .then(response => {
-          if (response.ok) return response.json();
-          throw new Error("Mot introuvable sur le Wiktionnaire");
-        })
-        .then(() => {
-          setIsLoading(false);
-          validerProposition();
-        })
-        .catch(() => {
-          const list = WORDS_BY_LENGTH[currentWordLength] || [];
-          if (list.map(w => w.toUpperCase()).includes(currentGuess.toUpperCase())) {
-            setIsLoading(false);
-            validerProposition();
-          } else {
-            setIsLoading(false);
-            triggerShake("Ce mot n'existe pas dans le dictionnaire !");
-          }
-        });
+     // Validation Wiktionnaire + Plan B renforcé
+fetch(`https://fr.wiktionary.org/api/rest_v1/page/definition/${currentGuess.toLowerCase()}`)
+  .then(response => {
+    // Si l'API Wiktionary est indisponible/en erreur serveur (500, 501, etc.)
+    if (response.status >= 500) {
+      throw new Error("SERVER_ERROR");
+    }
+    if (response.ok) return response.json();
+    throw new Error("NOT_FOUND");
+  })
+  .then(() => {
+    setIsLoading(false);
+    validerProposition();
+  })
+  .catch((error) => {
+    setIsLoading(false);
+    const list = WORDS_BY_LENGTH[currentWordLength] || [];
+    const isInLocalList = list.map(w => w.toUpperCase()).includes(currentGuess.toUpperCase());
+
+    // Si le serveur Wiktionary a planté (501) OU si le mot est dans la liste locale : on valide !
+    if (error.message === "SERVER_ERROR" || isInLocalList) {
+      validerProposition();
+    } else {
+      triggerShake("Ce mot n'existe pas dans le dictionnaire !");
+    }
+  });
 
     } else if (touche === 'BACKSPACE' || touche === 'DELETE') {
       setCurrentGuess(prev => prev.slice(0, -1));
