@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { compareWords, generateShareText } from '../logic/gamelogic'; 
+import { compareWords, generateShareText } from "../logic/gameLogic";
 import { getDailyWord, getTodayKey } from '../logic/daily';
 import Keyboard from '../components/Keyboard';
 import Timer from '../components/Timer';
