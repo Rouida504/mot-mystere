@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import '../styles/home.css';
 
 function Home() {
   const navigate = useNavigate();

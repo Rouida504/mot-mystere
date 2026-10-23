@@ -4,6 +4,7 @@ import Game from './Game';
 import Rules from './pages/Rules';
 import Scores from './pages/Scores';
 import Stats from './pages/Stats';
+import Game from './pages/game';
 
 function App() {
   return (

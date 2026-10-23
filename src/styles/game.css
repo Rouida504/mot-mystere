@@ -1,7 +1,5 @@
 
-/* ==========================================
-   1. STRUCTURE DE LA GRILLE DE JEU
-   ========================================== */
+/* STRUCTURE DE LA GRILLE DE JEU*/
 .game-container {
   display: flex;
   flex-direction: column;
@@ -38,9 +36,7 @@
 }
 
 
-/* ==========================================
-   2. ANIMATION DE TREMBLEMENT (SHAKE)
-   ========================================== */
+/* ANIMATION DE TREMBLEMENT (SHAKE) */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-6px); }
@@ -52,9 +48,7 @@
 }
 
 
-/* ==========================================
-   3. COULEURS DES LETTRES (GRILLE & CLAVIER)
-   ========================================== */
+/* COULEURS DES LETTRES (GRILLE & CLAVIER)*/
 /* Vert : Bonne lettre au bon endroit */
 .correct, .cell.green {
   background-color: #6aaa64 !important;
@@ -77,9 +71,7 @@
 }
 
 
-/* ==========================================
-   4. CLAVIER VIRTUEL INTERACTIF
-   ========================================== */
+/* CLAVIER VIRTUEL INTERACTIF */
 .keyboard {
   display: flex;
   flex-direction: column;

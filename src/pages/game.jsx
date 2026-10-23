@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { compareWords } from './gameLogic';
-import mots from './mots-solutions.json';
-import './Game.css';
+import { compareWords } from '../logic/gamelogic'; 
+import mots from '../mots-solutions.json'; 
+import '../styles/game.css'; 
 
 const KEYBOARD_ROWS = [
   ['A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
