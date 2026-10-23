@@ -1,4 +1,4 @@
-import mots from '../mots-solutions.json'; 
+import mots from './mots-solutions.json'; 
 export function getDailyWord() {
   const today = new Date();
   
