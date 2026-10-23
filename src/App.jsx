@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
-import Game from './Game';
 import Rules from './pages/Rules';
 import Scores from './pages/Scores';
 import Stats from './pages/Stats';

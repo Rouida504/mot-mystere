@@ -1,22 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { compareWords } from '../logic/gamelogic'; 
+import { compareWords, generateShareText } from '../logic/gamelogic'; 
+import { getDailyWord, getTodayKey } from '../logic/daily';
+import Keyboard from '../components/Keyboard';
+import Timer from '../components/Timer';
 import mots from '../mots-solutions.json'; 
 import '../styles/game.css'; 
 
-const KEYBOARD_ROWS = [
-  ['A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-  ['Q', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M'],
-  ['ENTER', 'W', 'X', 'C', 'V', 'B', 'N', 'DELETE']
-];
-
 function Game() {
-  // Choisir un mot au hasard au démarrage
-  const [motMystere, setMotMystere] = useState(() => {
-    const index = Math.floor(Math.random() * mots.length);
-    return mots[index].toUpperCase();
-  });
-
+  const [isDaily, setIsDaily] = useState(true); // Bascule Mode Mot du Jour et Partie Libre
+  const [motMystere, setMotMystere] = useState('');
+  
   const [messageErreur, setMessageErreur] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [pseudo, setPseudo] = useState('');
@@ -27,13 +21,45 @@ function Game() {
   const [invalidWord, setInvalidWord] = useState(false);
   const [letterStatuses, setLetterStatuses] = useState({});
 
-  // Charger le pseudo stocké
+  // Charger le pseudo et initialiser la partie (Mot du jour ou Partie libre)
   useEffect(() => {
-    const saved = localStorage.getItem('pseudo') || localStorage.getItem('player_pseudo');
-    if (saved) setPseudo(saved);
-  }, []);
+    const savedPseudo = localStorage.getItem('pseudo') || localStorage.getItem('player_pseudo');
+    if (savedPseudo) setPseudo(savedPseudo);
 
-  // Fonction pour enregistrer le résultat de la partie[cite: 5]
+    if (isDaily) {
+      const todayKey = getTodayKey();
+      const target = getDailyWord();
+      setMotMystere(target);
+
+      // Charger la partie du jour si elle existe déjà dans le localStorage
+      const savedGame = localStorage.getItem(`wordle_daily_${todayKey}`);
+      if (savedGame) {
+        const parsed = JSON.parse(savedGame);
+        setGuesses(parsed.guesses || []);
+        setGameOver(parsed.gameOver || false);
+        setIsWin(parsed.isWin || false);
+        if (parsed.guesses) {
+          updateKeyboardStatuses(parsed.guesses, target);
+        }
+      } else {
+        // Reset pour une nouvelle journée
+        setGuesses([]);
+        setGameOver(false);
+        setIsWin(false);
+        setLetterStatuses({});
+      }
+    } else {
+      // Mode Partie libre (aléatoire)
+      const randomWord = mots[Math.floor(Math.random() * mots.length)].toUpperCase();
+      setMotMystere(randomWord);
+      setGuesses([]);
+      setGameOver(false);
+      setIsWin(false);
+      setLetterStatuses({});
+    }
+  }, [isDaily]);
+
+  // Enregistrer le résultat de la partie
   const saveGameResult = (winStatus, attemptsCount) => {
     const history = JSON.parse(localStorage.getItem('wordle_history')) || [];
     const points = winStatus ? (7 - attemptsCount) * 100 : 0;
@@ -45,19 +71,30 @@ function Game() {
       word: motMystere,
       attempts: attemptsCount,
       points: points,
-      win: winStatus
+      win: winStatus,
+      isDaily: isDaily
     };
 
     localStorage.setItem('wordle_history', JSON.stringify([newEntry, ...history]));
+
+    // Si c'est le mode du jour, on sauvegarde l'état pour bloquer la rejouabilité
+    if (isDaily) {
+      const todayKey = getTodayKey();
+      localStorage.setItem(`wordle_daily_${todayKey}`, JSON.stringify({
+        guesses: guesses,
+        gameOver: true,
+        isWin: winStatus
+      }));
+    }
   };
 
-  // Mettre à jour les couleurs des touches du clavier virtuel[cite: 5]
-  const updateKeyboardStatuses = (newGuesses) => {
+  // Mettre à jour les couleurs des touches du clavier virtuel
+  const updateKeyboardStatuses = (newGuesses, currentTarget = motMystere) => {
     const newStatuses = { ...letterStatuses };
     newGuesses.forEach(guess => {
-      const couleurs = compareWords(guess, motMystere);
+      const couleurs = compareWords(guess, currentTarget);
       guess.split('').forEach((char, index) => {
-        const status = couleurs[index]; // 'correct', 'present', ou 'absent'
+        const status = couleurs[index]; 
         if (status === 'correct') {
           newStatuses[char] = 'correct';
         } else if (status === 'present' && newStatuses[char] !== 'correct') {
@@ -70,17 +107,17 @@ function Game() {
     setLetterStatuses(newStatuses);
   };
 
-  // Déclencher le tremblement de la ligne si le mot est invalide[cite: 5]
+  // Déclencher le tremblement de la ligne
   const triggerShake = (msg) => {
     setMessageErreur(msg);
     setInvalidWord(true);
     setTimeout(() => setInvalidWord(false), 500);
   };
 
-  // Fonction pour recommencer une partie avec un nouveau mot
-  const relancerPartie = () => {
-    const index = Math.floor(Math.random() * mots.length);
-    setMotMystere(mots[index].toUpperCase());
+  // Recommencer (uniquement dispo en mode Partie Libre)
+  const relancerPartieLibre = () => {
+    const randomWord = mots[Math.floor(Math.random() * mots.length)].toUpperCase();
+    setMotMystere(randomWord);
     setGuesses([]);
     setCurrentGuess('');
     setGameOver(false);
@@ -105,6 +142,14 @@ function Game() {
       setGameOver(true);
       setIsWin(false);
       saveGameResult(false, 6);
+    } else if (isDaily) {
+      // Sauvegarde intermédiaire pour le mot du jour en cours
+      const todayKey = getTodayKey();
+      localStorage.setItem(`wordle_daily_${todayKey}`, JSON.stringify({
+        guesses: nouvellesPropositions,
+        gameOver: false,
+        isWin: false
+      }));
     }
   };
 
@@ -121,7 +166,7 @@ function Game() {
       setIsLoading(true);
       setMessageErreur('');
 
-      // 1. Validation via l'API du Wiktionnaire[cite: 3]
+      // 1. Validation via l'API du Wiktionnaire
       fetch(`https://fr.wiktionary.org/api/rest_v1/page/definition/${currentGuess.toLowerCase()}`)
         .then(response => {
           if (response.ok) return response.json();
@@ -132,7 +177,7 @@ function Game() {
           validerProposition();
         })
         .catch(() => {
-          // 2. Plan de secours local[cite: 3]
+          // 2. Plan de secours local
           if (mots.includes(currentGuess.toLowerCase())) {
             setIsLoading(false);
             validerProposition();
@@ -168,6 +213,25 @@ function Game() {
     <div className="game-container">
       <h2>Partie de {pseudo || 'Joueur'}</h2>
 
+      {/* Compte à rebours avant minuit pour le mot du jour */}
+      {isDaily && <Timer />}
+
+      {/* Bouton pour basculer entre Mot du Jour et Partie Libre */}
+      <div style={{ marginBottom: '15px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
+        <button 
+          onClick={() => setIsDaily(true)} 
+          style={{ background: isDaily ? '#333' : '#ddd', color: isDaily ? '#fff' : '#000', padding: '6px 12px', cursor: 'pointer', borderRadius: '4px', border: 'none' }}
+        >
+          📅 Mot du Jour
+        </button>
+        <button 
+          onClick={() => setIsDaily(false)} 
+          style={{ background: !isDaily ? '#333' : '#ddd', color: !isDaily ? '#fff' : '#000', padding: '6px 12px', cursor: 'pointer', borderRadius: '4px', border: 'none' }}
+        >
+          ♾️ Partie Libre
+        </button>
+      </div>
+
       {/* Grille de jeu */}
       <div className="grid">
         {Array.from({ length: 6 }).map((_, rowIndex) => {
@@ -202,7 +266,7 @@ function Game() {
         })}
       </div>
 
-      {/* État de chargement[cite: 3] */}
+      {/* État de chargement */}
       {isLoading && (
         <p style={{ color: '#007bff', textAlign: 'center', marginTop: '10px' }}>
           Vérification sur le Wiktionnaire...
@@ -230,39 +294,33 @@ function Game() {
               (Voir sur le Wiktionnaire 📖)
             </a>
           </p>
-          <div style={{ marginTop: '10px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
-            <button onClick={relancerPartie} style={{ padding: '8px 16px', cursor: 'pointer' }}>
-              Rejouer
+          <div style={{ marginTop: '10px', display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            
+            {/* Bouton de partage des émojis */}
+            <button 
+              onClick={() => {
+                const textToShare = generateShareText(guesses, motMystere, isWin);
+                navigator.clipboard.writeText(textToShare);
+                alert("Résultat copié dans le presse-papiers ! 📋");
+              }} 
+              style={{ padding: '8px 16px', cursor: 'pointer', background: '#28a745', color: '#fff', border: 'none', borderRadius: '4px' }}
+            >
+              Partager 📤
             </button>
+
+            {!isDaily && (
+              <button onClick={relancerPartieLibre} style={{ padding: '8px 16px', cursor: 'pointer' }}>
+                Rejouer (Libre)
+              </button>
+            )}
             <Link to="/scores"><button style={{ padding: '8px 16px', cursor: 'pointer' }}>Voir les scores</button></Link>
             <Link to="/stats"><button style={{ padding: '8px 16px', cursor: 'pointer' }}>Voir les stats</button></Link>
           </div>
         </div>
       )}
 
-      {/* Clavier virtuel interactif[cite: 5] */}
-      <div className="keyboard" style={{ marginTop: '20px' }}>
-        {KEYBOARD_ROWS.map((row, rowIndex) => (
-          <div key={rowIndex} className="keyboard-row" style={{ display: 'flex', justifyContent: 'center', gap: '5px', marginBottom: '5px' }}>
-            {row.map((key) => (
-              <button
-                key={key}
-                onClick={() => handleInputKey(key)}
-                className={`key ${letterStatuses[key] || ''}`}
-                style={{
-                  padding: key.length > 1 ? '10px 12px' : '10px 15px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  borderRadius: '4px',
-                  border: 'none'
-                }}
-              >
-                {key === 'DELETE' ? '⌫' : key}
-              </button>
-            ))}
-          </div>
-        ))}
-      </div>
+      {/* Clavier virtuel séparé dans un composant externe */}
+      <Keyboard onKeyPress={handleInputKey} letterStatuses={letterStatuses} />
     </div>
   );
 }
