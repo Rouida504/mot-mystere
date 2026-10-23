@@ -61,7 +61,7 @@ function Home() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '200px', margin: '0 auto' }}>
         <Link to="/quatrdle">
           <button style={{ width: '100%', padding: '10px', cursor: 'pointer', borderRadius: '4px', backgroundColor: '#4a5568', color: 'white', fontWeight: 'bold', border: 'none' }}>
-            🎮 Mode Quatrdle (4 Grilles)
+             Mode Quatrdle 
           </button>
         </Link>
         <Link to="/rules"><button style={{ width: '100%', padding: '10px', cursor: 'pointer', borderRadius: '4px' }}>Règles du jeu</button></Link>
