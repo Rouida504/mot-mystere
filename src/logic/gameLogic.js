@@ -65,3 +65,38 @@ export function generateShareText(guesses, motMystere, isWin) {
 
   return text;
 }
+/**
+ * Vérifie si le mot proposé respecte les contraintes du mode difficile.
+ * @returns { { valid: boolean, message: string } }
+ */
+export function checkHardModeConstraints(guess, previousGuesses, targetWord) {
+  if (previousGuesses.length === 0) return { valid: true };
+
+  const lastGuess = previousGuesses[previousGuesses.length - 1];
+  const lastColors = compareWords(lastGuess, targetWord);
+
+  // 1. Les lettres vertes doivent rester à la même place
+  for (let i = 0; i < lastColors.length; i++) {
+    if (lastColors[i] === 'correct' && guess[i] !== lastGuess[i]) {
+      return {
+        valid: false,
+        message: `La ${i + 1}e lettre doit être un ${lastGuess[i]} !`
+      };
+    }
+  }
+
+  // 2. Les lettres jaunes doivent être réutilisées
+  for (let i = 0; i < lastColors.length; i++) {
+    if (lastColors[i] === 'present') {
+      const requiredChar = lastGuess[i];
+      if (!guess.includes(requiredChar)) {
+        return {
+          valid: false,
+          message: `Le mot doit contenir la lettre ${requiredChar} !`
+        };
+      }
+    }
+  }
+
+  return { valid: true };
+}
