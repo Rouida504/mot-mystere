@@ -222,13 +222,13 @@ function Game() {
           onClick={() => setIsDaily(true)} 
           style={{ background: isDaily ? '#333' : '#ddd', color: isDaily ? '#fff' : '#000', padding: '6px 12px', cursor: 'pointer', borderRadius: '4px', border: 'none' }}
         >
-          📅 Mot du Jour
+           Mot du Jour
         </button>
         <button 
           onClick={() => setIsDaily(false)} 
           style={{ background: !isDaily ? '#333' : '#ddd', color: !isDaily ? '#fff' : '#000', padding: '6px 12px', cursor: 'pointer', borderRadius: '4px', border: 'none' }}
         >
-          ♾️ Partie Libre
+           Partie Libre
         </button>
       </div>
 
@@ -291,7 +291,7 @@ function Game() {
               target="_blank" 
               rel="noopener noreferrer"
             >
-              (Voir sur le Wiktionnaire 📖)
+              (Voir sur le Wiktionnaire )
             </a>
           </p>
           <div style={{ marginTop: '10px', display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -301,11 +301,11 @@ function Game() {
               onClick={() => {
                 const textToShare = generateShareText(guesses, motMystere, isWin);
                 navigator.clipboard.writeText(textToShare);
-                alert("Résultat copié dans le presse-papiers ! 📋");
+                alert("Résultat copié dans le presse-papiers ! ");
               }} 
               style={{ padding: '8px 16px', cursor: 'pointer', background: '#28a745', color: '#fff', border: 'none', borderRadius: '4px' }}
             >
-              Partager 📤
+              Partager 
             </button>
 
             {!isDaily && (
