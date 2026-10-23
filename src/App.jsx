@@ -4,6 +4,7 @@ import Rules from './pages/Rules';
 import Scores from './pages/Scores';
 import Stats from './pages/Stats';
 import Game from './pages/game';
+import Quatrdle from './pages/Quatrdle';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/rules" element={<Rules />} />
           <Route path="/scores" element={<Scores />} />
           <Route path="/stats" element={<Stats />} />
+          <Route path="/quatrdle" element={<Quatrdle />} />
         </Routes>
       </div>
     </Router>
