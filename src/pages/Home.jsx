@@ -67,4 +67,11 @@ function Home() {
   );
 }
 
+<Link to="/quatrdle">
+  <button style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}>
+    🎮 Mode Quatrdle (4 Grilles)
+  </button>
+</Link>
+
+
 export default Home;
